@@ -20,6 +20,10 @@ all_data_df["Organ_Clean"] = all_data_df["Organ"].replace(organ_name_dict)
 all_data_df = all_data_df[all_data_df["Unnamed: 0"] != 0] #elim control ct for analysis"
 all_data_df = all_data_df.rename(columns={"Unnamed: 0":"CT#"})
 
+fit_function = ROOT.TF1("exp1","[0] * TMath::Exp(-[1]*(1-x))",0,1)
+fit_function.SetParNames("Norm", "Lambda")
+fit_function.SetParameters(300,5)
+
 full_hist = ROOT.TH1F("h",f"Total Fraction Overlap",25,0,1)
 hists = []
 organs = []
@@ -30,7 +34,7 @@ for organ, df_organ in all_data_df.groupby("Organ_Clean"):
             hist.Fill(val)
             full_hist.Fill(val)
     print(f'{organ} fit results')
-    fit_result = hist.Fit("gaus", "RS")
+    fit_result = hist.Fit(fit_function, "RS")
     try: 
         chi2 = fit_result.Chi2()
         ndf = fit_result.Ndf()
@@ -43,7 +47,7 @@ for organ, df_organ in all_data_df.groupby("Organ_Clean"):
     organs.append(organ)
 
 print('all data fit result')
-full_hist_fit_result = full_hist.Fit("gaus", "RS")
+full_hist_fit_result = full_hist.Fit(fit_function, "RS")
 
 chi2 = full_hist_fit_result.Chi2()
 ndf = full_hist_fit_result.Ndf()
