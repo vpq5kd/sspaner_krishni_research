@@ -22,29 +22,44 @@ all_data_df = all_data_df.rename(columns={"Unnamed: 0":"CT#"})
 
 full_hist = ROOT.TH1F("h",f"Total Fraction Overlap",25,0,1)
 hists = []
+organs = []
 for organ, df_organ in all_data_df.groupby("Organ_Clean"):
-    hist = ROOT.TH1F("h",f"{organ} Fraction Overlap Hist", 25, 0, 1)
+    hist = ROOT.TH1F(f"h{organ}",f"{organ} Fraction Overlap Hist", 25, 0, 1)
     for val in df_organ["FractionOverlap"]:
         if val != "NaN":
             hist.Fill(val)
             full_hist.Fill(val)
+    print(f'{organ} fit results')
     fit_result = hist.Fit("gaus", "RS")
     try: 
         chi2 = fit_result.Chi2()
         ndf = fit_result.Ndf()
         rchi2 = chi2/ndf
-        print(rchi2)
+        hist.SetTitle(f"{organ} Fraction Overlap Hist. Reduced Chi2: {rchi2}")
     except:
-       print("fit not working...") 
+       print("fit not working for {organ}...")
+       continue
     hists.append(hist)
+    organs.append(organ)
+
+print('all data fit result')
 full_hist_fit_result = full_hist.Fit("gaus", "RS")
 
 chi2 = full_hist_fit_result.Chi2()
 ndf = full_hist_fit_result.Ndf()
 rchi2 = chi2/ndf
-print(rchi2)
 
+full_hist.SetTitle(f"Fraction Overlap Hist for all Organs. Reduced Chi2: {rchi2}")
 hists.append(full_hist)
+organs.append("Full_Hist")
 
+c = ROOT.TCanvas("c","canvas", 800,600)
+organ_index = 0
+for hist in hists:
+    organ = organs[organ_index]
+    hist.Draw()
+    c.Update()
+    c.SaveAs(f"organ_hists/{organ}_hist.png")
+    organ_index+=1
 
 input("Please press enter to exit...")
