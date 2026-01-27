@@ -28,7 +28,7 @@ full_hist = ROOT.TH1F("h",f"Total Fraction Overlap",25,0,1)
 hists = []
 organs = []
 for organ, df_organ in all_data_df.groupby("Organ_Clean"):
-    hist = ROOT.TH1F(f"h{organ}",f"{organ} Fraction Overlap Hist", 25, 0, 1)
+    hist = ROOT.TH1F(f"{organ}",f"{organ} Fraction Overlap Hist;Fraction Overlap;Counts", 25, 0, 1)
     for val in df_organ["FractionOverlap"]:
         if val != "NaN":
             hist.Fill(val)
@@ -39,7 +39,7 @@ for organ, df_organ in all_data_df.groupby("Organ_Clean"):
         chi2 = fit_result.Chi2()
         ndf = fit_result.Ndf()
         rchi2 = chi2/ndf
-        hist.SetTitle(f"{organ} Fraction Overlap Hist. Reduced Chi2: {rchi2}")
+        hist.SetTitle(f"{organ} Fraction Overlap Hist. Reduced Chi2: {rchi2};Fraction Overlap; Counts")
     except:
        print("fit not working for {organ}...")
        continue
@@ -53,7 +53,7 @@ chi2 = full_hist_fit_result.Chi2()
 ndf = full_hist_fit_result.Ndf()
 rchi2 = chi2/ndf
 
-full_hist.SetTitle(f"Fraction Overlap Hist for all Organs. Reduced Chi2: {rchi2}")
+full_hist.SetTitle(f"Fraction Overlap Hist for all Organs. Reduced Chi2: {rchi2};Fraction Overlap; Counts")
 hists.append(full_hist)
 organs.append("Full_Hist")
 
