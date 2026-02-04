@@ -33,7 +33,7 @@ kept_cols = ['Organ_Clean', 'arm', 'V1.0 dosevol', 'V2.0 dosevol', 'V5.0 dosevol
 analyzed_cols = ['V1.0 dosevol','V2.0 dosevol', 'V5.0 dosevol']
 analyzed_data_df = all_data_df[kept_cols]
 
-data_file_name = "V1-5_stats.csv"
+data_file_name = "v1-5_outputs/V1-5_stats.csv"
 csv_header = "organ,col name,mean,min,max,std,range"
 with open(data_file_name, "w") as f:
     f.write(f"{csv_header}\n")
