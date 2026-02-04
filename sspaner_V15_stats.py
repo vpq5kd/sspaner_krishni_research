@@ -28,5 +28,29 @@ all_data_df = all_data_df[~all_data_df["Organ_Clean"].isin(removed_vals)]
 all_data_df = all_data_df[all_data_df["Unnamed: 0"] != 0] #elim control ct for analysis"
 all_data_df = all_data_df.rename(columns={"Unnamed: 0":"CT#"})
 
-print(all_data_df.columns)
+kept_cols = ['Organ_Clean', 'arm', 'V1.0 dosevol', 'V2.0 dosevol', 'V5.0 dosevol']
+
+analyzed_cols = ['V1.0 dosevol','V2.0 dosevol', 'V5.0 dosevol']
+analyzed_data_df = all_data_df[kept_cols]
+
+data_file_name = "V1-5_stats.txt"
+open(data_file_name, "w").close()
+
+for organ, df_organ in analyzed_data_df.groupby("Organ_Clean"):
+    for col_name in analyzed_cols:
+        col = df_organ[col_name]
+        mean = col.mean()
+        min_ = col.min()
+        max_ = col.max()
+        std = col.std()
+        range_ = max_ - min_
+
+        stats = f"organ: {organ} | col: {col_name} | mean: {mean} | min: {min_} | max: {max_} | std: {std} | range: {range_}"
+
+        with open(data_file_name, "a") as f:
+            f.write(f"{stats}\n")
+        
+        print(stats)
+
+print(f"Data saved to {data_file_name}")
 input("Please press enter to exit...")
