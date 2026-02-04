@@ -33,8 +33,10 @@ kept_cols = ['Organ_Clean', 'arm', 'V1.0 dosevol', 'V2.0 dosevol', 'V5.0 dosevol
 analyzed_cols = ['V1.0 dosevol','V2.0 dosevol', 'V5.0 dosevol']
 analyzed_data_df = all_data_df[kept_cols]
 
-data_file_name = "V1-5_stats.txt"
-open(data_file_name, "w").close()
+data_file_name = "V1-5_stats.csv"
+csv_header = "organ,col name,mean,min,max,std,range"
+with open(data_file_name, "w") as f:
+    f.write(f"{csv_header}\n")
 
 for organ, df_organ in analyzed_data_df.groupby("Organ_Clean"):
     for col_name in analyzed_cols:
@@ -44,8 +46,8 @@ for organ, df_organ in analyzed_data_df.groupby("Organ_Clean"):
         max_ = col.max()
         std = col.std()
         range_ = max_ - min_
-
-        stats = f"organ: {organ} | col: {col_name} | mean: {mean} | min: {min_} | max: {max_} | std: {std} | range: {range_}"
+        
+        stats = f"{organ},{col_name},{mean},{min_},{max_},{std},{range_}"
 
         with open(data_file_name, "a") as f:
             f.write(f"{stats}\n")
