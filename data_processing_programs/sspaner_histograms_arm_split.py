@@ -45,7 +45,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
         ndf = fit_result.Ndf()
         rchi2 = chi2/ndf
         if args.showfit == 'yes':
-            hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
+            hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | Fit: {args.fitfunc} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
         else:
             hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
     except:
@@ -62,9 +62,9 @@ chi2 = full_hist_fit_result.Chi2()
 ndf = full_hist_fit_result.Ndf()
 rchi2 = chi2/ndf
 if args.showfit == 'yes':
-    hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
+    full_hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | fit: {args.fitfunc} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
 else:
-    hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
+    full_hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
 hists.append(full_hist)
 organs.append(["Full_Hist",0])
 
@@ -79,11 +79,11 @@ for hist in full_hist_arms:
     chi2 = full_hist_fit_result.Chi2()
     ndf = full_hist_fit_result.Ndf()
     rchi2 = chi2/ndf
-if args.showfit == 'yes':
-    hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
-else:
-    hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
-    hists.append(hist)
+    if args.showfit == 'yes':
+        hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | fit: {args.fitfunc} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
+    else:
+        hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
+        hists.append(hist)
     organs.append(["Full Hist",arm_full_hist_arms])
     arm_full_hist_arms+=1
 
@@ -91,6 +91,7 @@ else:
 
 c = ROOT.TCanvas("c","canvas", 800,600)
 organ_index = 0
+print(len(hists))
 for hist in hists:
     organ = organs[organ_index][0]
     arm = organs[organ_index][1]
