@@ -15,7 +15,7 @@ analyzed_cols = all_data_df.select_dtypes(include=["number"]).columns.drop("CT#"
 analyzed_data_df = all_data_df
 
 data_file_name = "v1-5_outputs/V1-5_stats.csv"
-csv_header = "organ,col name,mean,min,max,std,range"
+csv_header = "organ,col name,mean,min,max,std,range,count"
 with open(data_file_name, "w") as f:
     f.write(f"{csv_header}\n")
 
@@ -26,10 +26,10 @@ for organ, df_organ in analyzed_data_df.groupby("Organ_Clean"):
         min_ = col.min()
         max_ = col.max()
         std = col.std()
+        count = col.size
         range_ = max_ - min_
         
-        stats = f"{organ},{col_name},{mean},{min_},{max_},{std},{range_}"
-
+        stats = f"{organ},{col_name},{mean},{min_},{max_},{std},{range_},{count}"
         with open(data_file_name, "a") as f:
             f.write(f"{stats}\n")
         
