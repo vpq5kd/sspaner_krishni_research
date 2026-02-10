@@ -11,10 +11,10 @@ all_data_df = template.all_data_df
 kept_cols = ['Organ_Clean', 'arm', 'V1.0 dosevol', 'V2.0 dosevol', 'V5.0 dosevol']
 
 #analyzed_cols = ['V1.0 dosevol','V2.0 dosevol', 'V5.0 dosevol']
-analyzed_cols = all_data_df.select_dtypes(include=["number"]).columns.drop("CT#")
+analyzed_cols = all_data_df.select_dtypes(include=["number"]).columns.drop(["CT#","Arm","arm"])
 analyzed_data_df = all_data_df
 
-data_file_name = "v1-5_outputs/V1-5_stats.csv"
+data_file_name = "numeric_stats_outputs/numeric_stats.csv"
 csv_header = "organ,col name,mean,min,max,std,range,count"
 with open(data_file_name, "w") as f:
     f.write(f"{csv_header}\n")
