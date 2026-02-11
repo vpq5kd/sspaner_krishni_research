@@ -131,4 +131,4 @@ for hist in hists:
         c.SaveAs(f"organ_hists/by_arm/{organ}_arm{arm}_{args.fitfunc}_hist.png")
     organ_index+=1
 
-input("Please press enter to exit...")
+print("Finished")
