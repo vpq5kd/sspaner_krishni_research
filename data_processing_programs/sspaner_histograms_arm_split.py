@@ -25,7 +25,7 @@ fit_title_dict = {'gausian':'Gausian', 'exponential':'Exponential'}
 column_title_dict = {'FractionOverlap':'Fractional Volume Overlap'}
 show_fit_dict = {'yes':'RS','no':'0RS'}
 
-def fit_hist(hist,organ,column_name):
+def fit_hist(hist,organ,arm,column_name):
     fit_result = hist.Fit(fit_dict[args.fitfunc], show_fit_dict[args.showfit])
     try: 
         chi2 = fit_result.Chi2()
@@ -61,7 +61,7 @@ def generate_histograms(column_name):
                     full_hist_arm2.Fill(val)
 
         print(f'{organ} arm:{arm} fit results')
-        hist = fit_hist(hist,organ,column_name)
+        hist = fit_hist(hist,organ,arm,column_name)
         if hist == 1:
             continue
         hists.append(hist)
@@ -73,7 +73,7 @@ def generate_histograms(column_name):
     for hist in full_hist_arms:
 
         print(f'Full hist arm: {arm_full_hist_arms} fit result')
-        hist = fit_hist(hist,organ,column_name)
+        hist = fit_hist(hist,"Full Hist",arm,column_name)
         if hist == 1:
             continue
         hists.append(hist)
