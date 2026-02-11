@@ -32,9 +32,9 @@ def fit_hist(hist,organ,arm,column_name):
         ndf = fit_result.Ndf()
         rchi2 = chi2/ndf
         if args.showfit == 'yes':
-            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution | Fit: {fit_title_dict[args.fitfunc]} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
+            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution | Fit: {fit_title_dict[args.fitfunc]} | Reduced Chi2: {rchi2};{column_title_dict[column_name]}; Counts")
         else:
-            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution;Fraction Overlap; Counts")
+            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution; {column_title_dict[column_name]}; Counts")
     except:
        print(f"fit not working for {organ}...")
        return 1
