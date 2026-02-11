@@ -81,48 +81,49 @@ def generate_histograms(column_name):
         arm_full_hist_arms+=1
     return hists, organs
 
-hists, organs = generate_histograms('FractionOverlap')
+def analyze_column(column_namei,c):
+    hists, organs = generate_histograms(column_name)
+    organ_index = 0
+    print(len(hists))
+    for hist in hists:
+        organ = organs[organ_index][0]
+        arm = organs[organ_index][1]
+        hist.SetStats(0)
+        hist.Draw()
+         
+        ROOT.gPad.Update()
+
+        stats = ROOT.TPaveStats(0.10, 0.70, 0.30, 0.90, "NDC")
+        stats.SetBorderSize(1)
+        stats.SetFillStyle(1001)
+        stats.SetFillColor(ROOT.kWhite)
+        stats.SetTextAlign(12)
+
+        first_bin = hist.FindFirstBinAbove(0)
+        xmin = hist.GetBinLowEdge(first_bin)
+
+        last_bin = hist.FindLastBinAbove(0)
+        xmax = hist.GetBinLowEdge(last_bin + 1)
+        
+        stats.AddText(f"{organ}")
+        stats.AddText(f"Entries = {int(hist.GetEntries())}")
+        stats.AddText(f"Mean = {hist.GetMean():.4f}")
+        stats.AddText(f"Std Dev = {hist.GetStdDev():.4f}")
+        stats.AddText(f"Min = {xmin}")
+        stats.AddText(f"Max = {xmax}")
+
+        stats.Draw()
+
+        ROOT.gPad.Modified()
+        ROOT.gPad.Update()
+
+        c.Update()
+        if args.showfit == 'no':
+            c.SaveAs(f"organ_hists/by_arm/{organ}_arm{arm}_{column_name}_nofit_hist.png")
+        else:
+            c.SaveAs(f"organ_hists/by_arm/{organ}_arm{arm}_{column_name}_{args.fitfunc}_hist.png")
+        organ_index+=1
 
 c = ROOT.TCanvas("c","canvas", 800,600)
-organ_index = 0
-print(len(hists))
-for hist in hists:
-    organ = organs[organ_index][0]
-    arm = organs[organ_index][1]
-    hist.SetStats(0)
-    hist.Draw()
-     
-    ROOT.gPad.Update()
-
-    stats = ROOT.TPaveStats(0.10, 0.70, 0.30, 0.90, "NDC")
-    stats.SetBorderSize(1)
-    stats.SetFillStyle(1001)
-    stats.SetFillColor(ROOT.kWhite)
-    stats.SetTextAlign(12)
-
-    first_bin = hist.FindFirstBinAbove(0)
-    xmin = hist.GetBinLowEdge(first_bin)
-
-    last_bin = hist.FindLastBinAbove(0)
-    xmax = hist.GetBinLowEdge(last_bin + 1)
-    
-    stats.AddText(f"{organ}")
-    stats.AddText(f"Entries = {int(hist.GetEntries())}")
-    stats.AddText(f"Mean = {hist.GetMean():.4f}")
-    stats.AddText(f"Std Dev = {hist.GetStdDev():.4f}")
-    stats.AddText(f"Min = {xmin}")
-    stats.AddText(f"Max = {xmax}")
-
-    stats.Draw()
-
-    ROOT.gPad.Modified()
-    ROOT.gPad.Update()
-
-    c.Update()
-    if args.showfit == 'no':
-        c.SaveAs(f"organ_hists/by_arm/{organ}_arm{arm}_nofit_hist.png")
-    else:
-        c.SaveAs(f"organ_hists/by_arm/{organ}_arm{arm}_{args.fitfunc}_hist.png")
-    organ_index+=1
-
+analyze_column("FractionOverlap",c)
 print("Finished")
