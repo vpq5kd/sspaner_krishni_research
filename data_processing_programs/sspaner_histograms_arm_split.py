@@ -19,75 +19,69 @@ exponential_fit_func = ROOT.TF1("exp1","[0] * TMath::Exp(-[1]*(1-x))",0,1)
 exponential_fit_func.SetParNames("Norm", "Lambda")
 exponential_fit_func.SetParameters(300,5)
 
+
 fit_dict = {'gausian':'gaus','exponential':exponential_fit_func}
+fit_title_dict = {'gausian':'Gausian', 'exponential':'Exponential'}
+column_title_dict = {'FractionOverlap':'Fractional Volume Overlap'}
 show_fit_dict = {'yes':'RS','no':'0RS'}
-full_hist = ROOT.TH1F("h",f"Total Fraction Overlap",25,0,1)
-full_hist_arm1 = ROOT.TH1F("full hist arm 1",f"Total Fraction Overlap",25,0,1)
-full_hist_arm2 = ROOT.TH1F("full hist arm 2",f"Total Fraction Overlap",25,0,1)
-hists = []
-organs = []
-for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
-    hist = ROOT.TH1F(f"{organ} arm: {arm}",f"{organ} arm:{arm} Fraction Overlap Hist;Fraction Overlap;Counts", 25, 0, 1)
-    for val in df_organ["FractionOverlap"]:
-        if val != "NaN":
-            hist.Fill(val)
-            full_hist.Fill(val)
 
-            if arm == 1:
-                full_hist_arm1.Fill(val)
-            else:
-                full_hist_arm2.Fill(val)
-
-    print(f'{organ} arm:{arm} fit results')
+def fit_hist(hist,organ,column_name):
     fit_result = hist.Fit(fit_dict[args.fitfunc], show_fit_dict[args.showfit])
     try: 
         chi2 = fit_result.Chi2()
         ndf = fit_result.Ndf()
         rchi2 = chi2/ndf
         if args.showfit == 'yes':
-            hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | Fit: {args.fitfunc} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
+            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution | Fit: {fit_title_dict[args.fitfunc]} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
         else:
-            hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
+            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution;Fraction Overlap; Counts")
     except:
-       print("fit not working for {organ}...")
-       continue
-    hists.append(hist)
-    organs.append([organ,arm])
-
-print('all data fit result')
-
-full_hist_fit_result = full_hist.Fit(fit_dict[args.fitfunc], show_fit_dict[args.showfit])
-
-chi2 = full_hist_fit_result.Chi2()
-ndf = full_hist_fit_result.Ndf()
-rchi2 = chi2/ndf
-if args.showfit == 'yes':
-    full_hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | fit: {args.fitfunc} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
-else:
-    full_hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
-hists.append(full_hist)
-organs.append(["Full_Hist",0])
+       print(f"fit not working for {organ}...")
+       return 1
+    return hist
 
 
-full_hist_arms = [full_hist_arm1, full_hist_arm2]
-arm_full_hist_arms = 1
-for hist in full_hist_arms:
+def generate_histograms(column_name):
+    full_hist = ROOT.TH1F("h",f"",25,0,1)
+    full_hist_arm1 = ROOT.TH1F("full hist arm 1",f"",25,0,1)
+    full_hist_arm2 = ROOT.TH1F("full hist arm 2",f"",25,0,1)
 
-    print(f'Full hist arm: {arm_full_hist_arms} fit result')
-    full_hist_fit_result = hist.Fit(fit_dict[args.fitfunc], show_fit_dict[args.showfit])
+    hists = []
+    organs = []
+    for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
+        hist = ROOT.TH1F(f"{organ} arm: {arm}",f"{organ} arm:{arm} {column_title_dict[column_name]} Hist;Fraction Overlap;Counts", 25, 0, 1)
+        for val in df_organ[f"{column_name}"]:
+            if val != "NaN":
+                hist.Fill(val)
+                full_hist.Fill(val)
 
-    chi2 = full_hist_fit_result.Chi2()
-    ndf = full_hist_fit_result.Ndf()
-    rchi2 = chi2/ndf
-    if args.showfit == 'yes':
-        hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution | fit: {args.fitfunc} | Reduced Chi2: {rchi2};Fraction Overlap; Counts")
-    else:
-        hist.SetTitle(f"{organ} | Arm: {arm} | Fractional Volume Overlap Distribution;Fraction Overlap; Counts")
+                if arm == 1:
+                    full_hist_arm1.Fill(val)
+                else:
+                    full_hist_arm2.Fill(val)
+
+        print(f'{organ} arm:{arm} fit results')
+        hist = fit_hist(hist,organ,column_name)
+        if hist == 1:
+            continue
         hists.append(hist)
-    organs.append(["Full Hist",arm_full_hist_arms])
-    arm_full_hist_arms+=1
+        organs.append([organ,arm])
 
 
+    full_hist_arms = [full_hist, full_hist_arm1, full_hist_arm2]
+    arm_full_hist_arms = 0
+    for hist in full_hist_arms:
+
+        print(f'Full hist arm: {arm_full_hist_arms} fit result')
+        hist = fit_hist(hist,organ,column_name)
+        if hist == 1:
+            continue
+        hists.append(hist)
+        organs.append(["Full Hist",arm_full_hist_arms])
+        arm_full_hist_arms+=1
+    return hists, organs
+
+hists, organs = generate_histograms('FractionOverlap')
 
 c = ROOT.TCanvas("c","canvas", 800,600)
 organ_index = 0
