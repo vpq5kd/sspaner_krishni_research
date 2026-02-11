@@ -81,7 +81,7 @@ def generate_histograms(column_name):
         arm_full_hist_arms+=1
     return hists, organs
 
-def analyze_column(column_namei,c):
+def analyze_column(column_name,c):
     hists, organs = generate_histograms(column_name)
     organ_index = 0
     print(len(hists))
