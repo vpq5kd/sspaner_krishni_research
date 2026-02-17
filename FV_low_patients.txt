@@ -1,0 +1,5 @@
+['NB' 'KE' 'SC' 'SF' 'SS' 'CR' 'CM' 'PD' 'HV' 'MB' 'JM' 'BJ' 'RS' 'OL'
+ 'TJ' 'TM' 'DL' 'LJ' 'LR' 'TP' 'AB' 'FH' 'SB' 'SJ' 'SE' 'SR' 'HB' 'SM'
+ 'HJ' 'ZH' 'MT' 'JT' 'WS' 'WA' 'FR' 'RR' 'CP' 'PJ' 'HT' 'EB' 'MH' 'MC'
+ 'WM' 'GL' 'GT']
+
