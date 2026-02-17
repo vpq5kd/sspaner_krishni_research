@@ -1,0 +1,132 @@
+from pathlib import Path
+import pandas as pd
+import numpy as np
+import ROOT
+import sys
+
+import sspaner_pat_data_3_processing_template as template
+
+import argparse
+
+parser = argparse.ArgumentParser('Data Analysis of Fractional Volume Overlap')
+parser.add_argument('--fitfunc',type=str,default='exponential', choices=['exponential','gausian'], help='fit function')
+parser.add_argument('--showfit', type=str, default='yes', choices=['yes','no'], help='show fit on graph')
+args = parser.parse_args()
+
+all_data_df = template.all_data_df
+
+exponential_fit_func = ROOT.TF1("exp1","[0] * TMath::Exp(-[1]*(1-x))",0,1)
+exponential_fit_func.SetParNames("Norm", "Lambda")
+exponential_fit_func.SetParameters(300,5)
+
+
+fit_dict = {'gausian':'gaus','exponential':exponential_fit_func}
+fit_title_dict = {'gausian':'Gausian', 'exponential':'Exponential'}
+column_title_dict = {'FractionOverlap':'Fractional Volume Overlap', 'V2.0 dosevol':'V2.0 dosevol', 'V2.0 dosevol/volume':'V2.0 dosevol/volume', 'V5.0 dosevol':'V5.0 dosevol', 'V5.0 dosevol/volume':'V5.0 dosevol/volume'}
+show_fit_dict = {'yes':'RS','no':'0RS'}
+
+def fit_hist(hist,organ,arm,column_name):
+    fit_result = hist.Fit(fit_dict[args.fitfunc], show_fit_dict[args.showfit])
+    try: 
+        chi2 = fit_result.Chi2()
+        ndf = fit_result.Ndf()
+        rchi2 = chi2/ndf
+        if args.showfit == 'yes':
+            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution | Fit: {fit_title_dict[args.fitfunc]} | Reduced Chi2: {rchi2};{column_title_dict[column_name]}; Counts")
+        else:
+            hist.SetTitle(f"{organ} | Arm: {arm} | {column_title_dict[column_name]} Distribution; {column_title_dict[column_name]}; Counts")
+    except:
+       print(f"fit not working for {organ}...")
+       return 1
+    return hist
+
+
+def generate_histograms(column_name):
+    full_hist = ROOT.TH1F("h",f"",25,0,500)
+    full_hist_arm1 = ROOT.TH1F("full hist arm 1",f"",25,0,500)
+    full_hist_arm2 = ROOT.TH1F("full hist arm 2",f"",25,0,500)
+
+    hists = []
+    organs = []
+    for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
+        hist = ROOT.TH1F(f"{organ} arm: {arm}",f"{organ} arm:{arm} {column_title_dict[column_name]} Hist;Fraction Overlap;Counts", 25, 0, 500)
+        for val in df_organ[f"{column_name}"]:
+            if val != "NaN":
+                hist.Fill(val)
+                full_hist.Fill(val)
+
+                if arm == 1:
+                    full_hist_arm1.Fill(val)
+                else:
+                    full_hist_arm2.Fill(val)
+
+        print(f'{organ} arm:{arm} fit results')
+        hist = fit_hist(hist,organ,arm,column_name)
+        if hist == 1:
+            continue
+        hists.append(hist)
+        organs.append([organ,arm])
+
+
+    full_hist_arms = [full_hist, full_hist_arm1, full_hist_arm2]
+    arm_full_hist_arms = 0
+    for hist in full_hist_arms:
+
+        print(f'Full hist arm: {arm_full_hist_arms} fit result')
+        hist = fit_hist(hist,"Full Hist",arm,column_name)
+        if hist == 1:
+            continue
+        hists.append(hist)
+        organs.append(["Full Hist",arm_full_hist_arms])
+        arm_full_hist_arms+=1
+    return hists, organs
+
+def analyze_column(column_name,c):
+    hists, organs = generate_histograms(column_name)
+    organ_index = 0
+    print(len(hists))
+    for hist in hists:
+        organ = organs[organ_index][0]
+        arm = organs[organ_index][1]
+        hist.SetStats(0)
+        hist.Draw()
+         
+        ROOT.gPad.Update()
+
+        stats = ROOT.TPaveStats(0.10, 0.70, 0.30, 0.90, "NDC")
+        stats.SetBorderSize(1)
+        stats.SetFillStyle(1001)
+        stats.SetFillColor(ROOT.kWhite)
+        stats.SetTextAlign(12)
+
+        first_bin = hist.FindFirstBinAbove(0)
+        xmin = hist.GetBinLowEdge(first_bin)
+
+        last_bin = hist.FindLastBinAbove(0)
+        xmax = hist.GetBinLowEdge(last_bin + 1)
+        
+        stats.AddText(f"{organ}")
+        stats.AddText(f"Entries = {int(hist.GetEntries())}")
+        stats.AddText(f"Mean = {hist.GetMean():.4f}")
+        stats.AddText(f"Std Dev = {hist.GetStdDev():.4f}")
+        stats.AddText(f"Min = {xmin}")
+        stats.AddText(f"Max = {xmax}")
+
+        stats.Draw()
+
+        ROOT.gPad.Modified()
+        ROOT.gPad.Update()
+
+        c.Update()
+        if args.showfit == 'no':
+            c.SaveAs(f"organ_hists/dosevol/{organ}_arm{arm}_{column_name}_nofit_hist.png")
+        else:
+            c.SaveAs(f"organ_hists/dosevol/{organ}_arm{arm}_{column_name}_{args.fitfunc}_hist.png")
+        organ_index+=1
+
+c = ROOT.TCanvas("c","canvas", 800,600)
+analyze_column("V2.0 dosevol", c)
+analyze_column("V2.0 dosevol/volume", c)
+analyze_column("V5.0 dosevol", c)
+analyze_column("V5.0 dosevol/volume",c)
+print("Finished")
