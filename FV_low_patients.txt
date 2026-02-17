@@ -1,5 +1,6 @@
-['NB' 'KE' 'SC' 'SF' 'SS' 'CR' 'CM' 'PD' 'HV' 'MB' 'JM' 'BJ' 'RS' 'OL'
+<0.7 -> ['NB' 'KE' 'SC' 'SF' 'SS' 'CR' 'CM' 'PD' 'HV' 'MB' 'JM' 'BJ' 'RS' 'OL'
  'TJ' 'TM' 'DL' 'LJ' 'LR' 'TP' 'AB' 'FH' 'SB' 'SJ' 'SE' 'SR' 'HB' 'SM'
  'HJ' 'ZH' 'MT' 'JT' 'WS' 'WA' 'FR' 'RR' 'CP' 'PJ' 'HT' 'EB' 'MH' 'MC'
  'WM' 'GL' 'GT']
 
+==0 -> ['BJ' 'RS' 'OL' 'TP' 'FH' 'SE' 'HB' 'SM' 'AB' 'RR' 'MH' 'MC' 'GT']
