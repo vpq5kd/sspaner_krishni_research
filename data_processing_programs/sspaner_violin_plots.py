@@ -18,7 +18,7 @@ df["Organ_Clean"] = (
         .str.title()
 )
 
-numeric_columns = df.select_dtypes(include=["number"]).columns.drop(["CT#","Arm","arm"])
+numeric_columns = df.select_dtypes(include=["number"]).columns.drop(["CT#","Arm","Arm ","arm"])
 
 column_filename_dict = {
     "MinDose": "min_dose",
@@ -68,16 +68,112 @@ column_filename_dict = {
     "V75.0 dosevol": "v75_dosevol",
     "V75.0 dosevol/volume": "v75_dosevol_per_volume",
 
-    "Arm ": "arm"
 }
 
 
+column_title_dict = {
+    "MinDose": "Minimum Dose",
+    "MaxDose": "Maximum Dose",
+    "MeanDose": "Mean Dose",
+    "TotalVolume (cm^3)": "Total Volume",
+    "IntegralDose": "Integral Dose",
+    "VolumeOverlap": "Volume Overlap",
+    "FractionOverlap": "Fraction Overlap",
+    "DminFromPTV (mm)": "Minimum Distance from PTV",
+    "CM Distance (mm)": "Center of Mass Distance",
+
+    "Max_sqrt(grad(Dose)*Dose)_1": "Max sqrt(∇Dose · Dose) (1)",
+    "Max1_Dose": "Maximum Dose (1)",
+    "Max_sqrt(grad(Dose)*Dose)_2": "Max sqrt(∇Dose · Dose) (2)",
+    "Max2_Dose": "Maximum Dose (2)",
+    "Max_sqrt(grad(Dose)*Dose)_3": "Max sqrt(∇Dose · Dose) (3)",
+    "Max3_Dose": "Maximum Dose (3)",
+    "Max_sqrt(grad(Dose)*Dose)_4": "Max sqrt(∇Dose · Dose) (4)",
+    "Max4_Dose": "Maximum Dose (4)",
+    "Max_sqrt(grad(Dose)*Dose)_5": "Max sqrt(∇Dose · Dose) (5)",
+    "Max5_Dose": "Maximum Dose (5)",
+
+    "V1.0 dosevol": "V1 Dose Volume",
+    "V1.0 dosevol/volume": "V1 Dose Volume Fraction",
+    "V2.0 dosevol": "V2 Dose Volume",
+    "V2.0 dosevol/volume": "V2 Dose Volume Fraction",
+    "V5.0 dosevol": "V5 Dose Volume",
+    "V5.0 dosevol/volume": "V5 Dose Volume Fraction",
+    "V10.0 dosevol": "V10 Dose Volume",
+    "V10.0 dosevol/volume": "V10 Dose Volume Fraction",
+    "V15.0 dosevol": "V15 Dose Volume",
+    "V15.0 dosevol/volume": "V15 Dose Volume Fraction",
+    "V20.0 dosevol": "V20 Dose Volume",
+    "V20.0 dosevol/volume": "V20 Dose Volume Fraction",
+
+    "V50.0 dosevol": "V50 Dose Volume",
+    "V50.0 dosevol/volume": "V50 Dose Volume Fraction",
+    "V55.0 dosevol": "V55 Dose Volume",
+    "V55.0 dosevol/volume": "V55 Dose Volume Fraction",
+    "V60.0 dosevol": "V60 Dose Volume",
+    "V60.0 dosevol/volume": "V60 Dose Volume Fraction",
+    "V65.0 dosevol": "V65 Dose Volume",
+    "V65.0 dosevol/volume": "V65 Dose Volume Fraction",
+    "V70.0 dosevol": "V70 Dose Volume",
+    "V70.0 dosevol/volume": "V70 Dose Volume Fraction",
+    "V75.0 dosevol": "V75 Dose Volume",
+    "V75.0 dosevol/volume": "V75 Dose Volume Fraction",
+}
+
+column_ylabel_dict = {
+    "MinDose": "Dose (Gy)",
+    "MaxDose": "Dose (Gy)",
+    "MeanDose": "Dose (Gy)",
+    "TotalVolume (cm^3)": "Volume (cm³)",
+    "IntegralDose": "Integral Dose (Gy·cm³)",
+    "VolumeOverlap": "Volume (cm³)",
+    "FractionOverlap": "Fraction",
+    "DminFromPTV (mm)": "Distance (mm)",
+    "CM Distance (mm)": "Distance (mm)",
+
+    "Max_sqrt(grad(Dose)*Dose)_1": "sqrt(∇Dose · Dose)",
+    "Max1_Dose": "Dose (Gy)",
+    "Max_sqrt(grad(Dose)*Dose)_2": "sqrt(∇Dose · Dose)",
+    "Max2_Dose": "Dose (Gy)",
+    "Max_sqrt(grad(Dose)*Dose)_3": "sqrt(∇Dose · Dose)",
+    "Max3_Dose": "Dose (Gy)",
+    "Max_sqrt(grad(Dose)*Dose)_4": "sqrt(∇Dose · Dose)",
+    "Max4_Dose": "Dose (Gy)",
+    "Max_sqrt(grad(Dose)*Dose)_5": "sqrt(∇Dose · Dose)",
+    "Max5_Dose": "Dose (Gy)",
+
+    "V1.0 dosevol": "Volume (cm³)",
+    "V1.0 dosevol/volume": "Fraction",
+    "V2.0 dosevol": "Volume (cm³)",
+    "V2.0 dosevol/volume": "Fraction",
+    "V5.0 dosevol": "Volume (cm³)",
+    "V5.0 dosevol/volume": "Fraction",
+    "V10.0 dosevol": "Volume (cm³)",
+    "V10.0 dosevol/volume": "Fraction",
+    "V15.0 dosevol": "Volume (cm³)",
+    "V15.0 dosevol/volume": "Fraction",
+    "V20.0 dosevol": "Volume (cm³)",
+    "V20.0 dosevol/volume": "Fraction",
+
+    "V50.0 dosevol": "Volume (cm³)",
+    "V50.0 dosevol/volume": "Fraction",
+    "V55.0 dosevol": "Volume (cm³)",
+    "V55.0 dosevol/volume": "Fraction",
+    "V60.0 dosevol": "Volume (cm³)",
+    "V60.0 dosevol/volume": "Fraction",
+    "V65.0 dosevol": "Volume (cm³)",
+    "V65.0 dosevol/volume": "Fraction",
+    "V70.0 dosevol": "Volume (cm³)",
+    "V70.0 dosevol/volume": "Fraction",
+    "V75.0 dosevol": "Volume (cm³)",
+    "V75.0 dosevol/volume": "Fraction",
+}
 for column in numeric_columns:
     plt.figure()
     sns.violinplot(data=df, x="Organ_Clean", y=column, hue='Organ_Clean',legend=False,palette="spring")
     plt.xticks(rotation=60)
-    plt.title(f"{column} Distribution for Each Organ".title())
-    plt.ylabel(f"{column}")
+    plt.title(f"{column_title_dict[column]} Distribution for Each Organ".title())
+    plt.ylabel(f"{column_ylabel_dict[column]}")
     plt.xlabel("Organ")
     plt.tight_layout()
     
