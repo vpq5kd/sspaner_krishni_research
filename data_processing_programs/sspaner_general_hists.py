@@ -61,7 +61,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
             ax.set_ylabel("Counts")
             ax.set_title(f"Organ: {organ} | Arm: {arm}")
            
-            filename=f"{final_super_folder}/{organ}/{organ}_{arm}_{fine_names_dict[column]}.png"
+            filename=f"{final_super_folder}/{organ}/{organ}_{arm}_{file_names_dict[column]}.png"
             plt.savefig(filename)
             print(f"Saved {filename}")
 
