@@ -18,12 +18,18 @@ df["Organ_Clean"] = (
         .str.title()
 )
 
-plt.figure()
-sns.violinplot(data=df, x="Organ_Clean", y="MeanDose",palette="spring")
-plt.xticks(rotation=60)
-plt.title("Mean Dose Distribution for Each Organ".title())
-plt.ylabel("Mean Dose (Gy)")
-plt.xlabel("Organ")
-plt.tight_layout()
-plt.savefig("violin_plots/mean_dose_vp.png")
-plt.show()
+numeric_columns = df.select_dtypes(include=["number"]).columns.drop(["CT#","Arm","arm"])
+
+for column in numeric_columns:
+    plt.figure()
+    sns.violinplot(data=df, x="Organ_Clean", y=column,  palette="spring")
+    plt.xticks(rotation=60)
+    plt.title(f"{column} Distribution for Each Organ".title())
+    plt.ylabel(f"{column}")
+    plt.xlabel("Organ")
+    plt.tight_layout()
+    
+    filename = f"violin_plots/{column}_vp.png"
+    plt.savefig(filename)
+    print(f"Saved {filename}")
+
