@@ -6,8 +6,8 @@ from sspaner_pat_data_3_processing_template import all_data_df
 
 plt.figure()
 
-columns = ["V2.0 dosevol", "V5.0 dosevol", "V2.0 doesvol/volume", "V5.0 dosevol/volume"]
-file_names_dict = {"V2.0 dosevol":"V2D", "V5.0 dosevol":"V5D","V2.0 doesvol/volume":"V2DV","V5.0 dosevol/volume":"V5DV"}
+columns = ["V2.0 dosevol", "V5.0 dosevol", "V2.0 dosevol/volume", "V5.0 dosevol/volume"]
+file_names_dict = {"V2.0 dosevol":"V2D", "V5.0 dosevol":"V5D","V2.0 dosevol/volume":"V2DV","V5.0 dosevol/volume":"V5DV"}
 final_super_folder = "organ_hists/dosevol"
 for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
     for column in columns:
