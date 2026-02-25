@@ -1,2 +1,0 @@
-Processing data with 40 cores.
-Processing data with 40 cores.
