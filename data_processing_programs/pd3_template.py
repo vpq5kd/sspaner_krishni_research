@@ -1,7 +1,6 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
-import ROOT
 import sys
 
 pat_data_3 = Path("./pat_data_3")

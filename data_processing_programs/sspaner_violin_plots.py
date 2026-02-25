@@ -200,7 +200,8 @@ def make_violin_plot(column):
     return filename
 
 def main():
-
+    
+    print(f"Processing data with {os.cpu_count()} cores.")
     with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
         results = list(
             tqdm(
