@@ -1,4 +1,7 @@
 from pd3_template import all_data_df as df
+from concurrent.futures import ProcessPoolExecutor
+from tqdm import tqdm
+import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -171,16 +174,43 @@ column_ylabel_dict = {
 
 df["CT_Group"] = df["CT#"].apply(lambda x: "Planning" if x == 0 else "Delivered")
 
-for column in numeric_columns:
+
+def make_violin_plot(column):
     plt.figure(figsize=(18,8))
-    sns.violinplot(data=df, x="Organ_Clean", y=column, hue='CT_Group',legend=True,palette="spring",density_norm='width')
+
+    sns.violinplot(
+        data=df,
+        x="Organ_Clean",
+        y=column,
+        hue="CT_Group",
+        palette="spring",
+        density_norm="width"
+    )
+
     plt.xticks(rotation=60)
-    plt.title(f"{column_title_dict[column]} Distribution for Each Organ".title())
-    plt.ylabel(f"{column_ylabel_dict[column]}")
+    plt.title(f"{column_title_dict[column]} Distribution for Each Organ")
+    plt.ylabel(column_ylabel_dict[column])
     plt.xlabel("Organ")
     plt.tight_layout()
-    
+
     filename = f"violin_plots/{column_filename_dict[column]}_vp.png"
     plt.savefig(filename)
     plt.close()
-    print(f"Saved {filename}")
+
+    return filename
+
+def main():
+
+    with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
+        results = list(
+            tqdm(
+                executor.map(make_violin_plot, numeric_columns),
+                total=len(numeric_columns)
+            )
+        )
+
+    for f in results:
+        print(f"Saved {f}")
+
+if __name__ == "__main__":
+    main()
