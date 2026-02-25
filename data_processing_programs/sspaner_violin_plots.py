@@ -178,11 +178,13 @@ df["CT_Group"] = df["CT#"].apply(lambda x: "Planned" if x == 0 else "Delivered")
 def make_violin_plot(column):
     plt.figure(figsize=(18,8))
 
+    plot_df = df
+
     if column == 'DminFromPTV (mm)':
-        df = df[df["Organ_Clean"] != "Lungs"]
+        plot_df = df[df["Organ_Clean"] != "Lungs"]
 
     sns.violinplot(
-        data=df,
+        data=plot_df,
         x="Organ_Clean",
         y=column,
         hue="CT_Group",
