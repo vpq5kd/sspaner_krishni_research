@@ -29,3 +29,4 @@ all_data_df = all_data_df[~all_data_df["Organ_Clean"].isin(removed_vals)]
 all_data_df = all_data_df.rename(columns={"Unnamed: 0":"CT#"})
 
 
+

@@ -168,9 +168,12 @@ column_ylabel_dict = {
     "V75.0 dosevol": "Volume (cm³)",
     "V75.0 dosevol/volume": "Fraction",
 }
+
+df["CT_Group"] = df["CT#"].apply(lambda x: "Planning" if x == 0 else "Delivered")
+
 for column in numeric_columns:
-    plt.figure()
-    sns.violinplot(data=df, x="Organ_Clean", y=column, hue='Organ_Clean',legend=False,palette="spring")
+    plt.figure(figsize=(18,8))
+    sns.violinplot(data=df, x="Organ_Clean", y=column, hue='CT_Group',legend=True,palette="spring",density_norm='width')
     plt.xticks(rotation=60)
     plt.title(f"{column_title_dict[column]} Distribution for Each Organ".title())
     plt.ylabel(f"{column_ylabel_dict[column]}")
