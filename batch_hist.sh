@@ -1,7 +1,6 @@
-python data_processing_programs/sspaner_histograms_arm_split.py --fitfunc gausian --showfit yes
-python data_processing_programs/sspaner_histograms_arm_split.py --fitfunc exponential --showfit yes
-python data_processing_programs/sspaner_histograms_arm_split.py --fitfunc exponential --showfit no
+#!/bin/bash
 
+python3 data_processing_programs/sspaner_violin_plots.py
 git add .
-git commit -m "ran batch hists"
+git commit -m "changed planning to planned in vps"
 git push

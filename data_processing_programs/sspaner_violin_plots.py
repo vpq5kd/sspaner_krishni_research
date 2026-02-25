@@ -172,7 +172,7 @@ column_ylabel_dict = {
     "V75.0 dosevol/volume": "Fraction",
 }
 
-df["CT_Group"] = df["CT#"].apply(lambda x: "Planning" if x == 0 else "Delivered")
+df["CT_Group"] = df["CT#"].apply(lambda x: "Planned" if x == 0 else "Delivered")
 
 
 def make_violin_plot(column):
