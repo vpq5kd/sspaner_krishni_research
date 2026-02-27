@@ -1,7 +1,6 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
-import ROOT
 import sys
 
 pat_data_3 = Path("./pat_data_3")
@@ -29,4 +28,5 @@ all_data_df = all_data_df[~all_data_df["Organ_Clean"].isin(removed_vals)]
 all_data_df = all_data_df.rename(columns={"Unnamed: 0":"CT#"})
 
 
+print(all_data_df.loc[(all_data_df["CT#"] == 0) & (all_data_df["MaxDose"] > 2.0) & (all_data_df["FractionOverlap"] < .7), ["CT#", "Patient", "Organ", "MaxDose", "VolumeOverlap","FractionOverlap"]])
 

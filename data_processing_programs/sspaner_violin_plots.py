@@ -172,14 +172,19 @@ column_ylabel_dict = {
     "V75.0 dosevol/volume": "Fraction",
 }
 
-df["CT_Group"] = df["CT#"].apply(lambda x: "Planning" if x == 0 else "Delivered")
+df["CT_Group"] = df["CT#"].apply(lambda x: "Planned" if x == 0 else "Delivered")
 
 
 def make_violin_plot(column):
     plt.figure(figsize=(18,8))
 
+    plot_df = df
+
+    if column == 'DminFromPTV (mm)':
+        plot_df = df[df["Organ_Clean"] != "Lungs"]
+
     sns.violinplot(
-        data=df,
+        data=plot_df,
         x="Organ_Clean",
         y=column,
         hue="CT_Group",
@@ -200,7 +205,8 @@ def make_violin_plot(column):
     return filename
 
 def main():
-
+    
+    print(f"Processing data with {os.cpu_count()} cores.")
     with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
         results = list(
             tqdm(

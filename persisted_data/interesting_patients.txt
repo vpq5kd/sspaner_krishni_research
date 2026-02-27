@@ -1,0 +1,2 @@
+      CT# Patient  Organ  MaxDose  VolumeOverlap  FractionOverlap
+1302    0     CP0  Aorta  2.05861       0.078125         0.078125

@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
-from sspaner_pat_data_3_processing_template import all_data_df
+from pd3_template import all_data_df
 
 plt.figure()
-
+all_data_df["Dose_Type"] = all_data_df["CT#"].apply(lambda x: "Planned" if x == 0 else "Delivered")
 columns = ["V2.0 dosevol", "V5.0 dosevol", "V2.0 dosevol/volume", "V5.0 dosevol/volume"]
 file_names_dict = {"V2.0 dosevol":"V2D", "V5.0 dosevol":"V5D","V2.0 dosevol/volume":"V2DV","V5.0 dosevol/volume":"V5DV"}
 final_super_folder = "organ_hists/dosevol"
@@ -20,11 +20,14 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
                 print(f"{final_super_folder}/{organ} already exists.")
                 pass
             
+            planned_data = df_organ.loc[df_organ["Dose_Type"] == "Planned", column].dropna()
+            delivered_data = df_organ.loc[df_organ["Dose_Type"] == "Delivered", column].dropna()
             data = df_organ[column].dropna()
 
             fig, ax = plt.subplots()
 
-            ax.hist(data, histtype='step', edgecolor='black')
+            ax.hist(planned_data, histtype='step', edgecolor='black', label='Planned')
+            ax.hist(delivered_data, histtype='step', edgecolor='red', label='Delivered')
 
             mean = np.mean(data)
             median = np.median(data)
@@ -61,8 +64,10 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
             ax.set_ylabel("Counts")
             ax.set_title(f"Organ: {organ} | Arm: {arm}")
            
+            ax.legend()
             filename=f"{final_super_folder}/{organ}/{organ}_{arm}_{file_names_dict[column]}.png"
             plt.savefig(filename)
+            plt.close()
             print(f"Saved {filename}")
 
         except KeyError:
