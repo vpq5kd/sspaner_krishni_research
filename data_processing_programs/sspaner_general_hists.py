@@ -26,9 +26,12 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
 
             fig, ax = plt.subplots()
 
-            ax.hist(planned_data, histtype='step', edgecolor='black', label='Planned')
-            ax.hist(delivered_data, histtype='step', edgecolor='red', label='Delivered')
-
+            ax.hist(planned_data, histtype='step', edgecolor='green', label='Planned',density=True)
+            ax.hist(delivered_data, histtype='stepfilled', edgecolor='black', facecolor='pink', label='Delivered', density=True)
+            
+            ax.axvline(planned_data.mean(), color='grey', linestyle='--', label='Planned Mean', linewidth = 3)
+            ax.axvline(delivered_data.mean(), color='black', linestyle='--', label='Delivered Mean', linewidth = 3)
+            
             mean = np.mean(data)
             median = np.median(data)
             std = np.std(data)
@@ -61,11 +64,12 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
             )
 
             ax.set_xlabel(column)
-            ax.set_ylabel("Counts")
+            ax.set_ylabel("Normalized Counts")
             ax.set_title(f"Organ: {organ} | Arm: {arm}")
            
-            ax.legend()
+            ax.legend(loc='center right')
             filename=f"{final_super_folder}/{organ}/{organ}_{arm}_{file_names_dict[column]}.png"
+            #plt.show()
             plt.savefig(filename)
             plt.close()
             print(f"Saved {filename}")
