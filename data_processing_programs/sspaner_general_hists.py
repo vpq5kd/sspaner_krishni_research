@@ -6,8 +6,8 @@ from pd3_template import all_data_df
 
 plt.figure()
 all_data_df["Dose_Type"] = all_data_df["CT#"].apply(lambda x: "Planned" if x == 0 else "Delivered")
-columns = ["V2.0 dosevol", "V5.0 dosevol", "V2.0 dosevol/volume", "V5.0 dosevol/volume"]
-file_names_dict = {"V2.0 dosevol":"V2D", "V5.0 dosevol":"V5D","V2.0 dosevol/volume":"V2DV","V5.0 dosevol/volume":"V5DV"}
+columns = ["V2.0 dosevol", "V5.0 dosevol", "V2.0 dosevol/volume", "V5.0 dosevol/volume", "V10.0 dosevol", "V10.0 dosevol/volume"]
+file_names_dict = {"V2.0 dosevol":"V2D", "V5.0 dosevol":"V5D","V2.0 dosevol/volume":"V2DV","V5.0 dosevol/volume":"V5DV", "V10.0 dosevol":"V10D", "V10.0 dosevol/volume":"V10DV"}
 final_super_folder = "organ_hists/dosevol"
 for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
     for column in columns:
