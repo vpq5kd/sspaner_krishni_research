@@ -178,34 +178,36 @@ df["CT_Group"] = df["CT#"].apply(lambda x: "Planned" if x == 0 else "Delivered")
 
 
 def make_violin_plot(column):
-    plt.figure(figsize=(18,8))
+    for rtog_value in df["RTOG"].dropna().unique():
 
-    plot_df = df
+        plt.figure(figsize=(18,8))
 
-    if column == 'DminFromPTV (mm)':
-        plot_df = df[df["Organ_Clean"] != "Lungs-Itv"]
+        plot_df = df[df["RTOG"] == rtog_value]
 
-    sns.violinplot(
-        data=plot_df,
-        x="Organ_Clean",
-        y=column,
-        hue="CT_Group",
-        palette="spring",
-        density_norm="width"
-    )
+        if column == 'DminFromPTV (mm)':
+            plot_df = df[df["Organ_Clean"] != "Lungs-Itv"]
 
-    plt.xticks(rotation=60)
-    plt.title(f"{column_title_dict[column]} Distribution for Each Organ")
-    plt.ylabel(column_ylabel_dict[column])
-    plt.xlabel("Organ")
-    plt.tight_layout()
+        sns.violinplot(
+            data=plot_df,
+            x="Organ_Clean",
+            y=column,
+            hue="CT_Group",
+            palette="spring",
+            density_norm="width"
+        )
 
-    filename = f"violin_plots/{column_filename_dict[column]}_vp.png"
-    #plt.show()
-    plt.savefig(filename)
-    plt.close()
+        plt.xticks(rotation=60)
+        plt.title(f"{column_title_dict[column]} Distribution for Each Organ")
+        plt.ylabel(column_ylabel_dict[column])
+        plt.xlabel("Organ")
+        plt.tight_layout()
 
-    return filename
+        filename = f"violin_plots/{column_filename_dict[column]}_{rtog_value}_vp.png"
+        #plt.show()
+        plt.savefig(filename)
+        print(f"saved {filename}")
+        plt.close()
+
 
 def main():
     '''
@@ -219,8 +221,7 @@ def main():
         )
     '''
     for column in numeric_columns:
-        filename = make_violin_plot(column)
-        print(f"saved {filename}")
+        make_violin_plot(column)
 
 if __name__ == "__main__":
     main()
