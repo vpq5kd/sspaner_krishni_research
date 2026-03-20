@@ -3,6 +3,8 @@ from concurrent.futures import ProcessPoolExecutor
 from tqdm import tqdm
 import os
 import seaborn as sns
+#import matplotlib
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 df["Organ_Clean"] = (
@@ -21,7 +23,7 @@ df["Organ_Clean"] = (
         .str.title()
 )
 
-numeric_columns = df.select_dtypes(include=["number"]).columns.drop(["CT#","Arm","Arm ","arm"])
+numeric_columns = df.select_dtypes(include=["number"]).columns.drop(["CT#","Arm","Arm ","arm", "RTOG"])
 
 column_filename_dict = {
     "MinDose": "min_dose",
@@ -181,7 +183,7 @@ def make_violin_plot(column):
     plot_df = df
 
     if column == 'DminFromPTV (mm)':
-        plot_df = df[df["Organ_Clean"] != "Lungs"]
+        plot_df = df[df["Organ_Clean"] != "Lungs-Itv"]
 
     sns.violinplot(
         data=plot_df,
@@ -206,7 +208,7 @@ def make_violin_plot(column):
     return filename
 
 def main():
-    
+    '''
     print(f"Processing data with {os.cpu_count()} cores.")
     with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
         results = list(
@@ -215,9 +217,10 @@ def main():
                 total=len(numeric_columns)
             )
         )
-
-    for f in results:
-        print(f"Saved {f}")
+    '''
+    for column in numeric_columns:
+        filename = make_violin_plot(column)
+        print(f"saved {filename}")
 
 if __name__ == "__main__":
     main()

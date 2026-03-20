@@ -23,7 +23,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
             planned_data = df_organ.loc[df_organ["Dose_Type"] == "Planned", column].dropna()
             delivered_data = df_organ.loc[df_organ["Dose_Type"] == "Delivered", column].dropna()
             data = df_organ[column].dropna()
-
+            
             fig, ax = plt.subplots()
 
             ax.hist(planned_data, histtype='step', edgecolor='green', label='Planned',density=True)
@@ -45,7 +45,8 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
                 f"Median = {median:.4f}\n"
                 f"Std Dev = {std:.4f}\n"
                 f"Min = {min_val:.4f}\n"
-                f"Max = {max_val:.4f}"
+                f"Max = {max_val:.4f}\n"
+                f"M_Diff = {planned_data.mean() - delivered_data.mean()}"
             )
 
             ax.text(
