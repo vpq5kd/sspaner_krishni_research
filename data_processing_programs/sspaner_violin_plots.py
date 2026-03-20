@@ -197,7 +197,7 @@ def make_violin_plot(column):
         )
 
         plt.xticks(rotation=60)
-        plt.title(f"{column_title_dict[column]} Distribution for Each Organ")
+        plt.title(f"{column_title_dict[column]} Distribution for Each Organ in RTOG: {rtog_value}")
         plt.ylabel(column_ylabel_dict[column])
         plt.xlabel("Organ")
         plt.tight_layout()
