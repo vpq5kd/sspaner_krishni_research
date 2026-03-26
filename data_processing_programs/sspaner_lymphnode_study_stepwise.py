@@ -26,7 +26,6 @@ for i in [2, 5, 10]:
         .groupby("pt_id")[f"V{i}.0 dosevol"]
         .diff()
     )
-
 print(lymphnode_df.head(20))
 
 for i in [2, 5, 10]:
