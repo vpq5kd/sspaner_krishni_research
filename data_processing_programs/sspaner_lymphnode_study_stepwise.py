@@ -48,7 +48,7 @@ for i in [2, 5, 10]:
     mean_df = (
         df_plot
         .groupby("CT#")[f"V{i}_step_delta"]
-        .mean()
+        .std()
         .reset_index()
     )
 
@@ -58,10 +58,10 @@ for i in [2, 5, 10]:
         mean_df[f"V{i}_step_delta"],
         linewidth=4,
         color="orange",
-        label="Average"
+        label="Standard Deviation"
     )
 
-    plt.xlabel("CT#")
+    plt.xlabel("CBCT#")
     plt.xticks(range(6))
     plt.xlim(1,5)
     plt.ylabel(fr"$\Delta$ V{i} step (cc)")

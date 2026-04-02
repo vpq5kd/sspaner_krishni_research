@@ -34,15 +34,15 @@ for i in [2,5,10]:
         group = group.sort_values('CT#')
         plt.plot(group["CT#"], group[f"V{i}_delta"],alpha=0.2,color='black')
 
-    mean_df = (
+    std_df = (
         lymphnode_df
         .groupby("CT#")[f"V{i}_delta"]
-        .mean()
+        .std()
         .reset_index()
     )
     plt.plot([],[],color='black', alpha=0.2, label='Patients')
-    plt.plot(mean_df["CT#"], mean_df[f"V{i}_delta"], linewidth=4,color='purple',label='Average')
-    plt.xlabel('CT#')
+    plt.plot(std_df["CT#"], std_df[f"V{i}_delta"], linewidth=4,color='purple',label='Standard Deviation')
+    plt.xlabel('CBCT#')
     plt.ylabel(fr'$\Delta$ V{i} (cc)')
     plt.title(f'Change in Lymphnode V{i} Dosevol From Baseline Over Each CT')
     plt.legend()
