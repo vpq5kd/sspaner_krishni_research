@@ -61,7 +61,7 @@ for organ in organs:
         plt.figure()
         plt.scatter(x, y, linewidth=4, color="purple", marker="+")
         plt.xlabel("Dose Gradient")
-        plt.ylabel(fr"|$\Delta$ V{i} (cc)|")
+        plt.ylabel(fr"$\Delta$ V{i} (cc)")
         plt.title(
             f"Dose Gradient vs. Change in {organ} V{i} Dosevol From Baseline"
         )
