@@ -11,17 +11,23 @@ file_names_dict = {"V2.0 dosevol":"V2D", "V5.0 dosevol":"V5D","V2.0 dosevol/volu
 final_super_folder = "organ_hists/dosevol"
 for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
     for column in columns:
+        if column in ["V2.0 dosevol/volume", "V5.0 dosevol/volume", "V10.0 dosevol/volume"]:
+            continue
         try:
 
             try:
                 Path(f"{final_super_folder}/{organ}").mkdir()
                 print(f"Created {final_super_folder}/{organ}")
             except FileExistsError:
-                print(f"{final_super_folder}/{organ} already exists.")
+                #print(f"{final_super_folder}/{organ} already exists.")
                 pass
             
             planned_data = df_organ.loc[df_organ["Dose_Type"] == "Planned", column].dropna()
             delivered_data = df_organ.loc[df_organ["Dose_Type"] == "Delivered", column].dropna()
+
+            print(f"{organ}, {arm}, {column}, {(planned_data.mean() - delivered_data.mean()):.3f}")
+            continue
+
             fig, ax = plt.subplots()
 
             ax.hist(planned_data, histtype='step', edgecolor='green', label='Planned',density=True)
@@ -44,7 +50,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
                 f"Std Dev = {std:.4f}\n"
                 f"Min = {min_val:.4f}\n"
                 f"Max = {max_val:.4f}\n"
-                f"M_Diff = {planned_data.mean() - delivered_data.mean()}"
+                f"M_Diff = {(planned_data.mean() - delivered_data.mean()):3f}"
             )
 
             ax.text(
