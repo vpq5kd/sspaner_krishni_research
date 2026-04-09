@@ -56,7 +56,7 @@ for organ in organs:
         x = plot_df["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
         x = x**2 / plot_df["Max1_Dose"].to_numpy()
 
-        y = np.abs(plot_df[f"V{i}_delta"].to_numpy())
+        y =plot_df[f"V{i}_delta"].to_numpy()
 
         plt.figure()
         plt.scatter(x, y, linewidth=4, color="purple", marker="+")
