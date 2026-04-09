@@ -70,7 +70,6 @@ for organ in organs:
         plt.title(
             f"Dose Gradient vs. Change in {organ} V{i} Dosevol From Baseline"
         )
-        plt.show()
         safe_organ = str(organ).replace("/", "_").replace(" ", "_")
         filename = f"organ_study/{safe_organ}_v{i}_delta_dosegrad.png"
 
