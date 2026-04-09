@@ -14,7 +14,8 @@ cols = [
     "TotalVolume (cm^3)",
     "RTOG",
     "Max_sqrt(grad(Dose)*Dose)_1",
-    "Max1_Dose"
+    "Max1_Dose",
+    "arm"
 ]
 
 df = all_data_df[cols].copy()
@@ -53,19 +54,23 @@ for organ in organs:
             ]
         )
 
-        x = plot_df["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
-        x = x**2 / plot_df["Max1_Dose"].to_numpy()
+        x1 = plot_df[plot_df["arm"]==1]["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
+        x2 = plot_df[plot_df["arm"]==2]["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
+        x1 = x1**2 / plot_df[plot_df["arm"]==1]["Max1_Dose"].to_numpy()
+        X2 = x2**2/ plot_df[plot_df["arm"]==2]["Max1_Dose"].to_numpy() 
+        y1 =plot_df[plot_df["arm"]==1][f"V{i}_delta"].to_numpy()
 
-        y =plot_df[f"V{i}_delta"].to_numpy()
-
+        y2 =plot_df[plot_df["arm"]==2][f"V{i}_delta"].to_numpy()
         plt.figure()
-        plt.scatter(x, y, linewidth=4, color="purple", marker="+")
+        plt.scatter(x1, y1, linewidth=4, color="blue", marker="+",label="arm 1")
+        plt.scatter(x2, y2, linewidth=4, color='mediumvioletred', marker='x', label='arm 2')
+        plt.legend()
         plt.xlabel("Dose Gradient")
         plt.ylabel(fr"$\Delta$ V{i} (cc)")
         plt.title(
             f"Dose Gradient vs. Change in {organ} V{i} Dosevol From Baseline"
         )
-
+        plt.show()
         safe_organ = str(organ).replace("/", "_").replace(" ", "_")
         filename = f"organ_study/{safe_organ}_v{i}_delta_dosegrad.png"
 
