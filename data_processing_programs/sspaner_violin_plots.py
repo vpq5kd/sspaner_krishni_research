@@ -177,6 +177,8 @@ column_ylabel_dict = {
 df["CT_Group"] = df["CT#"].apply(lambda x: "Planned" if x == 0 else "Delivered")
 
 
+organ_order = sorted(df["Organ_Clean"].dropna().unique())
+
 def make_violin_plot(column):
     for rtog_value in df["RTOG"].dropna().unique():
 
@@ -193,7 +195,8 @@ def make_violin_plot(column):
             y=column,
             hue="CT_Group",
             palette="spring",
-            density_norm="width"
+            density_norm="width",
+            order = organ_order
         )
 
         plt.xticks(rotation=60)

@@ -202,9 +202,9 @@ def make_violin_plot(column):
     plt.tight_layout()
 
     filename = f"violin_plots/modified_violin_plots/{column_filename_dict[column]}_vp.png"
-    plt.show()
     plt.savefig(filename)
     print(f"saved {filename}")
+    plt.show()
     plt.close()
 
 
