@@ -50,7 +50,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
                 f"Std Dev = {std:.4f}\n"
                 f"Min = {min_val:.4f}\n"
                 f"Max = {max_val:.4f}\n"
-                f"M_Diff = {(delivered_data.mean() - planned_data.mean()):3f}"
+                f"M_Diff = {(delivered_data.mean() - planned_data.mean()):.3f}"
             )
 
             ax.text(
