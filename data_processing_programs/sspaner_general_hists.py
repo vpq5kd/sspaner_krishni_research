@@ -26,7 +26,6 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
             delivered_data = df_organ.loc[df_organ["Dose_Type"] == "Delivered", column].dropna()
 
             print(f"{organ}, {arm}, {column}, {(planned_data.mean() - delivered_data.mean()):.3f}")
-            continue
 
             fig, ax = plt.subplots()
 
@@ -36,6 +35,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
             ax.axvline(planned_data.mean(), color='grey', linestyle='--', label='Planned Mean', linewidth = 3)
             ax.axvline(delivered_data.mean(), color='black', linestyle='--', label='Delivered Mean', linewidth = 3)
             
+            data = df_organ[column]
             mean = np.mean(data)
             median = np.median(data)
             std = np.std(data)
@@ -50,7 +50,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
                 f"Std Dev = {std:.4f}\n"
                 f"Min = {min_val:.4f}\n"
                 f"Max = {max_val:.4f}\n"
-                f"M_Diff = {(planned_data.mean() - delivered_data.mean()):3f}"
+                f"M_Diff = {(delivered_data.mean() - planned_data.mean()):3f}"
             )
 
             ax.text(
@@ -69,7 +69,7 @@ for (organ,arm), df_organ in all_data_df.groupby(["Organ_Clean","arm"]):
             )
 
             ax.set_xlabel(column)
-            ax.set_ylabel("Normalized Counts")
+            ax.set_ylabel("Density")
             ax.set_title(f"Organ: {organ} | Arm: {arm}")
            
             ax.legend(loc='center right')
