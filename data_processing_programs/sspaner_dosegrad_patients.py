@@ -25,7 +25,7 @@ df["dosegrad"] = (
     / df["Max1_Dose"]
 )
 
-high = df[df["dosegrad"] >= 10]
+high = df[df["dosegrad"] >= 20]
 
 print(high[[
     "pt_id",
