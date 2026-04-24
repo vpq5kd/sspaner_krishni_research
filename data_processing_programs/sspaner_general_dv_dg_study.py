@@ -57,7 +57,7 @@ for organ in organs:
         x1 = plot_df[plot_df["arm"]==1]["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
         x2 = plot_df[plot_df["arm"]==2]["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
         x1 = x1**2 / plot_df[plot_df["arm"]==1]["Max1_Dose"].to_numpy()
-        X2 = x2**2/ plot_df[plot_df["arm"]==2]["Max1_Dose"].to_numpy() 
+        x2 = x2**2/ plot_df[plot_df["arm"]==2]["Max1_Dose"].to_numpy() 
         y1 =plot_df[plot_df["arm"]==1][f"V{i}_delta"].to_numpy()
 
         y2 =plot_df[plot_df["arm"]==2][f"V{i}_delta"].to_numpy()
