@@ -46,13 +46,13 @@ for organ in organs:
         valid_pts = valid_pts[valid_pts].index
 
         plot_df = organ_df[organ_df["pt_id"].isin(valid_pts)].copy()
-        plot_df = plot_df.dropna(
-            subset=[
-                "Max_sqrt(grad(Dose)*Dose)_1",
-                "Max1_Dose",
-                f"V{i}_delta"
-            ]
-        )
+        #plot_df = plot_df.dropna(
+         #   subset=[
+          #      "Max_sqrt(grad(Dose)*Dose)_1",
+           #     "Max1_Dose",
+            #    f"V{i}_delta"
+            #]
+        #)
 
         x1 = plot_df[plot_df["arm"]==1]["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
         x2 = plot_df[plot_df["arm"]==2]["Max_sqrt(grad(Dose)*Dose)_1"].to_numpy()
@@ -68,7 +68,7 @@ for organ in organs:
         plt.xlabel("Dose Gradient")
         plt.ylabel(fr"$\Delta$ V{i} (cc)")
         plt.title(
-            f"Dose Gradient vs. Change in {organ} V{i} Dosevol From Baseline"
+            f"Change in {organ} V{i} Dosevol From Baseline vs. Dose Gradient"
         )
         safe_organ = str(organ).replace("/", "_").replace(" ", "_")
         filename = f"organ_study/{safe_organ}_v{i}_delta_dosegrad.png"
