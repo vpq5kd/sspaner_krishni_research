@@ -44,6 +44,8 @@ def get_statistics(dataframe):
     return (mean, Min, Max, Range, std)
 
 
+df_cbct = df_cbct.sort_values(by='Organ_Clean')
+
 with open("v2_stats_all.txt", "a") as f:
 
     print("Organ Patient PID Planning_v2 Delivered_v2 Percent_difference Abs_difference", file=f)
