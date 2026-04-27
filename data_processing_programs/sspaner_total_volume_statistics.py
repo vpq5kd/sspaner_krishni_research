@@ -8,7 +8,8 @@ cols = [
     "Organ_Clean",
     "Patient",
     "CT#",
-    "TotalVolume (cm^3)"
+    "TotalVolume (cm^3)",
+    "V2.0 dosevol"
 ]
 
 df = all_data_df[cols].copy()
@@ -31,4 +32,25 @@ df["total_volume_abs_diff"] = (df["tv_base"] - df["TotalVolume (cm^3)"])
 
 df_cbct = df[df["CT#"] != 0].copy()
 
-df_cbct.to_csv("persisted_data/total_volume_study.csv")
+def get_statistics(dataframe):
+    array = dataframe.to_numpy()
+
+    mean = np.mean(array)
+    Min = np.nanmin(array)
+    Max = np.nanmax(array)
+    Range = Max - Min
+    std = np.std(array)
+
+    return (mean, Min, Max, Range, std)
+
+print("organ column mean min max range std")
+
+for organ, df_organ in df_cbct.groupby(["Organ_Clean"]):
+    mean, Min, Max, Range, std = get_statistics(df_organ["total_volume_pct_diff"])
+    print(organ[0], "Percent_Difference", mean, Min, Max, Range, std)
+
+for organ, df_organ in df_cbct.groupby(["Organ_Clean"]):
+    mean, Min, Max, Range, std = get_statistics(df_organ["total_volume_abs_diff"])
+    print(organ[0], "Absolute_Difference", mean, Min, Max, Range, std)
+
+
