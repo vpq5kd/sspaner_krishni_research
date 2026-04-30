@@ -191,7 +191,8 @@ def make_violin_plot(column):
         x="Organ_Clean",
         y=column,
         palette="spring",
-        density_norm="width"
+        density_norm="width",
+        cut=0
     )
 
     plt.xticks(rotation=60)
