@@ -21,52 +21,39 @@ cols = [
 df = all_data_df[cols].copy()
 df["pt_id"] = df["Patient"].str[:-1]
 
-os.makedirs("organ_study", exist_ok=True)
+results = []
+for (organ, arm), group in df.groupby(["Organ_Clean","arm"]):
+    row = {"organ": organ, "arm": arm}
+    for i in [2,5,10]:
+        baseline = (
+            group[group["CT#"] == 0][["pt_id", f"V{i}.0 dosevol"]]
+            .rename(columns={f"V{i}.0 dosevol": f"V{i}_base"})
+        )
 
-organs = sorted(df["Organ_Clean"].dropna().unique())
+        groupi = group.merge(baseline, on="pt_id", how="left")
 
-index = 0
+        groupi[f"V{i}_delta"] = (
+            groupi[f"V{i}.0 dosevol"] - groupi[f"V{i}_base"]
+        )
 
-interesting_patients =[]
-for organ in organs:
-    for arm in [1,2]:
-        organ_df = df[(df["Organ_Clean"] == organ) & (df["arm"] == arm)].copy()
+        delivered_delta_mean = groupi[groupi["CT#"] != 0][f"V{i}_delta"].mean()
+        row[f"V{i}"] = delivered_delta_mean
 
-        for i in [2, 5, 10]:
-            baseline = (
-                organ_df[organ_df["CT#"] == 0][["pt_id", f"V{i}.0 dosevol"]]
-                .drop_duplicates(subset=["pt_id"])
-                .rename(columns={f"V{i}.0 dosevol": f"V{i}_base"})
-            )
-
-            organ_df = organ_df.merge(baseline, on="pt_id", how="left")
-
-            organ_df[f"V{i}_delta"] = (
-                organ_df[f"V{i}.0 dosevol"] - organ_df[f"V{i}_base"]
-            )
-            for pt, df_pt in organ_df.groupby(["pt_id"]):
-                for delta in df_pt[f"V{i}_delta"]:
-                    if delta > 10:
-                        interesting_patients.append((pt, organ,f"V{i}",delta))
+    results.append(row)
 
 
-        for i in [2, 5, 10]:
-            valid_pts = organ_df.groupby("pt_id")[f"V{i}.0 dosevol"].max() > 0
-            valid_pts = valid_pts[valid_pts].index
-            plot_df = organ_df[organ_df["pt_id"].isin(valid_pts)].copy()
-            delta_array = plot_df[f"V{i}_delta"].to_numpy()
-            Min = np.nanmin(delta_array)
-            Max = np.nanmax(delta_array)
-            Range = Max-Min
-            std = np.std(delta_array)
-            mean = np.mean(delta_array)
-            
-            #if index == 0:
-                #print(f"organ,dose,arm,mean,std,max,min,range")
-            #print(f"{organ},V{i},{arm},{mean},{std},{Max},{Min},{Range}")
-            
-            index+=1
-            
-for patient in interesting_patients:
-    pid, organ, v_value, delta = patient
-    print(f"{pid[0]},{organ},{v_value},{delta}")
+
+table_df = pd.DataFrame(results)
+final_table = table_df.pivot(index="organ",columns="arm",values=[f"V{i}" for i in [2,5,10]])
+
+final_table.columns = [
+    f"A{arm}, {threshold}"
+    for threshold, arm in final_table.columns
+]
+
+final_table.to_csv("persisted_data/table1.csv")
+
+
+    
+
+
