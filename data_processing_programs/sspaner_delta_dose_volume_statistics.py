@@ -51,7 +51,7 @@ final_table.columns = [
     for threshold, arm in final_table.columns
 ]
 
-final_table.to_csv("persisted_data/table1.csv")
+final_table.to_csv("persisted_data/table1.csv",float_format="%.3f")
 
 
     
